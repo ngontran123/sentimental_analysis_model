@@ -10,7 +10,6 @@ def load_model():
     model_path = os.path.join(os.path.abspath(os.getcwd()), 'sentiment_analysis_model')
     print("model path here is:" + model_path)
     model = tf.keras.models.load_model(model_path)
-
     return model
 
 
@@ -30,7 +29,7 @@ def inference_model(input_sequence):
                 'input_ids': input_ids,
                 'attention_mask': attention_mask,
                 'token_type_ids': token_type_ids
-            });
+            })
         logits = predictions['logits']
         predicted_value = tf.argmax(logits, axis=1).numpy()[0]
     except Exception as e:
