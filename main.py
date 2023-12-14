@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import time
 from typing import Optional
 from Service.sentimental_analysis_model import inference_model
+import pip
 
 app = FastAPI(docs_url='/', title='Sentiment_Analysis_Service',
               description='This is the Service used to make inference on model to predict the sentiment of comment'
@@ -19,6 +20,11 @@ app.add_middleware(
 )
 
 
+async def get_all_installed_modules():
+    installed_packages = pip.get_installed_distributions()
+    installed_packages_list = sorted(["%s==%s" % (i.key, i.version) for i in installed_packages])
+    print(installed_packages_list)
+
 @app.middleware('http')
 async def count_request_handle_time(request: Request, handle_call):
     start_time = time.time()
@@ -33,6 +39,7 @@ async def post_sentimental_service(input_sequence: str = Body(embed=True)):
     predicted_index = inference_model(input_sequence)
     labels = ['Negative', 'Positive']
     response_ob = {}
+    await get_all_installed_modules()
     if predicted_index != -1:
         response_ob = {
             'status': True,
@@ -46,3 +53,4 @@ async def post_sentimental_service(input_sequence: str = Body(embed=True)):
             'data': ''
         }
     return response_ob
+
